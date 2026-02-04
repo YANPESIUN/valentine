@@ -54,7 +54,11 @@
 <body>
 
 <div class="content">
-  <video src="video.webm" autoplay loop muted playsinline></video>
+  <video autoplay loop muted playsinline>
+    <source src="video.webm" type="video/webm">
+    <source src="video.mp4" type="video/mp4">
+    Ваш браузер не поддерживает видео.
+  </video>
   <h2>Урааа! Я в тебе не сомневалась!</h2>
   <a href="https://t.me/sashaonline" target="_blank" class="button">
     Подпишись на канал ❤️
