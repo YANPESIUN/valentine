@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Will you be my Valentine?</title>
+
+<style>
+  * {
+    box-sizing: border-box;
+    font-family: system-ui, sans-serif;
+  }
+
+  body {
+    margin: 0;
+    height: 100vh;
+    background: #f3b7c4;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    position: relative;
+  }
+
+  /* Плавающие сердечки */
+  .floating-hearts {
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    overflow: hidden;
+    z-index: 0;
+  }
+
+  .heart {
+    position: absolute;
+    font-size: 20px;
+    animation: float 15s infinite linear;
+    opacity: 0;
+  }
+
+  @keyframes float {
+    0% {
+      transform: translateY(100vh) rotate(0deg) scale(0.5);
+      opacity: 0;
+    }
+    10% {
+      opacity: 0.6;
+    }
+    90% {
+      opacity: 0.6;
+    }
+    100% {
+      transform: translateY(-100vh) rotate(720deg) scale(1.2);
+      opacity: 0;
+    }
+  }
+
+  .wrapper {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+  }
+
+  /* КАРТИНКА */
+  .valentine {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    max-height: 80vh;
+    max-width: 90vw;
+    pointer-events: none;
+  }
+
+  /* КНОПКИ */
+  button {
+    position: absolute;
+    border: none;
+    border-radius: 999px;
+    padding: 14px 36px;
+    font-size: 18px;
+    cursor: pointer;
+    user-select: none;
+    white-space: nowrap;
+    z-index: 10;
+  }
+
+  #yesBtn {
+    background: linear-gradient(180deg, #ff4b7d, #ff2f66);
+    color: white;
+    box-shadow: 0 8px 20px rgba(255, 47, 102, 0.4);
+  }
+
+  #noBtn {
+    background: #ffffff;
+    color: #444;
+    box-shadow: 0 6px 14px rgba(0,0,0,0.15);
+    transition: all 0.15s ease-out;
+  }
+
+  /* Модальное окно */
+  .modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.8);
+    z-index: 1000;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+  }
+
+  .modal-content {
+    background: #f3b7c4;
+    padding: 30px;
+    border-radius: 20px;
+    text-align: center;
+    max-width: 500px;
+    width: 90%;
+    animation: scaleIn 0.3s;
+  }
+
+  @keyframes scaleIn {
+    from {
+      transform: scale(0.8);
+      opacity: 0;
+    }
+    to {
+      transform: scale(1);
+      opacity: 1;
+    }
+  }
+
+  .modal h2 {
+    color: #d6336c;
+    margin-bottom: 20px;
+    font-size: 1.8rem;
+  }
+
+  video {
+    max-width: 100%;
+    border-radius: 16px;
+    margin-bottom: 20px;
+  }
+
+  .tg-button {
+    background-color: #ffffff;
+    color: #d6336c;
+    font-size: 18px;
+    font-weight: 600;
+    padding: 12px 24px;
+    border-radius: 12px;
+    text-decoration: none;
+    transition: transform 0.2s, box-shadow 0.2s;
+    display: inline-block;
+    border: none;
+    cursor: pointer;
+  }
+
+  .tg-button:hover {
+    transform: scale(1.05);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+  }
+
+  .close-btn {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    background: none;
+    border: none;
+    font-size: 30px;
+    color: white;
+    cursor: pointer;
+    padding: 0;
+    width: 40px;
+    height: 40px;
+  }
+</style>
+</head>
+
+<body>
+
+<!-- Плавающие сердечки -->
+<div class="floating-hearts" id="floatingHearts"></div>
+
+<div class="wrapper" id="wrapper">
+  <img src="valentine.png" class="valentine" id="img" alt="Valentine">
+
+  <button id="yesBtn">Yes</button>
+  <button id="noBtn">No</button>
+</div>
+
+<!-- Модальное окно -->
+<div class="modal" id="modal">
+  <button class="close-btn" onclick="closeModal()">×</button>
+  <div class="modal-content">
+    <video id="successVideo" autoplay loop playsinline>
+      <source src="video.webm" type="video/webm">
+      <source src="video.mp4" type="video/mp4">
+      Ваш браузер не поддерживает видео.
+    </video>
+    <h2>Урааа!<br> Я в тебе не сомневалась!</h2>
+    <a href="https://t.me/sashaonline" target="_blank" class="tg-button">
+      Подпишись на канал ❤️
+    </a>
+  </div>
+</div>
+
+<script>
+// Генерация плавающих сердечек
+function createFloatingHearts() {
+  const container = document.getElementById('floatingHearts');
+  const hearts = ['💕', '💖', '💗', '💓', '💝', '💘', '❤️', '💞'];
+  
+  for (let i = 0; i < 12; i++) {
+    const heart = document.createElement('div');
+    heart.className = 'heart';
+    heart.textContent = hearts[Math.floor(Math.random() * hearts.length)];
+    heart.style.left = Math.random() * 100 + '%';
+    heart.style.animationDuration = (Math.random() * 10 + 10) + 's';
+    heart.style.animationDelay = Math.random() * 15 + 's';
+    heart.style.fontSize = (Math.random() * 20 + 15) + 'px';
+    container.appendChild(heart);
+  }
+}
+
+const yesBtn = document.getElementById("yesBtn");
+const noBtn = document.getElementById("noBtn");
+const img = document.getElementById("img");
+const wrapper = document.getElementById("wrapper");
+const modal = document.getElementById("modal");
+const video = document.getElementById("successVideo");
+
+/* стартовое положение */
+function placeInitial() {
+  const imgRect = img.getBoundingClientRect();
+  const centerY = imgRect.bottom + 20;
+
+  yesBtn.style.left = (window.innerWidth / 2 - yesBtn.offsetWidth - 20) + "px";
+  yesBtn.style.top = centerY + "px";
+
+  noBtn.style.left = (window.innerWidth / 2 + 20) + "px";
+  noBtn.style.top = centerY + "px";
+}
+
+function jumpNo() {
+  const imgRect = img.getBoundingClientRect();
+  const btnRect = noBtn.getBoundingClientRect();
+
+  const padding = 24;
+  const radius = 160;
+
+  const side = Math.floor(Math.random() * 4);
+
+  let x, y;
+
+  switch (side) {
+    case 0:
+      x = imgRect.left + Math.random() * imgRect.width;
+      y = imgRect.top - btnRect.height - padding - Math.random() * radius;
+      break;
+
+    case 1:
+      x = imgRect.left + Math.random() * imgRect.width;
+      y = imgRect.bottom + padding + Math.random() * radius;
+      break;
+
+    case 2:
+      x = imgRect.left - btnRect.width - padding - Math.random() * radius;
+      y = imgRect.top + Math.random() * imgRect.height;
+      break;
+
+    case 3:
+      x = imgRect.right + padding + Math.random() * radius;
+      y = imgRect.top + Math.random() * imgRect.height;
+      break;
+  }
+
+  x = Math.max(10, Math.min(x, window.innerWidth - btnRect.width - 10));
+  y = Math.max(10, Math.min(y, window.innerHeight - btnRect.height - 10));
+
+  noBtn.style.left = x + "px";
+  noBtn.style.top = y + "px";
+}
+
+/* Проверка расстояния от курсора до кнопки NO */
+function checkCursorProximity(e) {
+  const btnRect = noBtn.getBoundingClientRect();
+  const mouseX = e.clientX;
+  const mouseY = e.clientY;
+  
+  // Центр кнопки
+  const btnCenterX = btnRect.left + btnRect.width / 2;
+  const btnCenterY = btnRect.top + btnRect.height / 2;
+  
+  // Расстояние от курсора до центра кнопки
+  const distance = Math.hypot(mouseX - btnCenterX, mouseY - btnCenterY);
+  
+  // Если курсор ближе 100px — кнопка убегает (раньше чем курсор дойдёт до неё)
+  const triggerDistance = 120; // px
+  
+  if (distance < triggerDistance) {
+    jumpNo();
+  }
+}
+
+/* Отслеживание движения мыши по всему документу */
+document.addEventListener('mousemove', checkCursorProximity);
+
+/* Для мобильных — убегает при приближении пальца */
+document.addEventListener('touchmove', (e) => {
+  const touch = e.touches[0];
+  const mouseEvent = {
+    clientX: touch.clientX,
+    clientY: touch.clientY
+  };
+  checkCursorProximity(mouseEvent);
+}, { passive: true });
+
+/* Также прыжок при прямом наведении (на всякий случай) */
+noBtn.addEventListener("mouseenter", jumpNo);
+noBtn.addEventListener("touchstart", e => {
+  e.preventDefault();
+  jumpNo();
+});
+
+/* Модальное окно вместо перехода */
+yesBtn.onclick = () => {
+  modal.style.display = "flex";
+  video.play().catch(e => console.log("Autoplay prevented:", e));
+};
+
+function closeModal() {
+  modal.style.display = "none";
+  video.pause();
+}
+
+// Закрытие по клику вне контента
+modal.addEventListener('click', (e) => {
+  if (e.target === modal) closeModal();
+});
+
+// Инициализация
+window.onload = () => {
+  placeInitial();
+  createFloatingHearts();
+};
+
+window.onresize = placeInitial;
+</script>
+
+</body>
+</html>
